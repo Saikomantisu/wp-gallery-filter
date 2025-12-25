@@ -9,12 +9,14 @@ class Gallery_Filter_AJAX
         add_action('wp_ajax_nopriv_get_images', [$this, 'get_images']);
         add_action('wp_ajax_save_image_categories', [$this, 'save_image_categories']);
         add_action('wp_ajax_get_image_categories', [$this, 'get_image_categories']);
+        add_action('wp_ajax_get_filtered_categories', [$this, 'get_filtered_categories']);
+        add_action('wp_ajax_nopriv_get_filtered_categories', [$this, 'get_filtered_categories']);
     }
 
     public function get_images()
     {
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'gallery_filter_nonce')) {
-            wp_die('Security check failed');
+            wp_send_json_error('Security check failed', 403);
         }
 
         $paged = max(1, intval($_POST['paged'] ?? 1));
@@ -60,10 +62,10 @@ class Gallery_Filter_AJAX
         $relation = count($tax_query) > 1 ? "AND" : "OR";
 
         if (!empty($tax_query) && $category !== 'all') {
-            $args['tax_query'] = [
-                'relation' => $relation,
+            $args['tax_query'] = array_merge(
+                ['relation' => $relation],
                 $tax_query
-            ];
+            );
         } else {
             // For frontend, only show categorized images
             if (!current_user_can('edit_posts')) {
@@ -113,7 +115,7 @@ class Gallery_Filter_AJAX
         $categories = array_map('intval', $_POST['categories'] ?? []);
 
         if ($image_id <= 0) {
-            wp_send_json_error('Invalid image ID');
+            wp_send_json_error('Invalid image ID', 400);
         }
 
         $result = wp_set_object_terms($image_id, $categories, 'gf_image_category');
@@ -143,5 +145,84 @@ class Gallery_Filter_AJAX
         }, $categories);
 
         wp_send_json_success(['categories' => $cat_data]);
+    }
+
+    public function get_filtered_categories()
+    {
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'gallery_filter_nonce')) {
+            wp_send_json_error('Security check failed', 403);
+        }
+
+        $filter_type = sanitize_text_field($_POST['filter_type'] ?? '');
+        $selected_location = sanitize_text_field($_POST['selected_location'] ?? '');
+        $selected_type = sanitize_text_field($_POST['selected_type'] ?? '');
+
+        if (!in_array($filter_type, ['event_locations', 'event_types'])) {
+            wp_send_json_error('Invalid filter type', 400);
+        }
+
+        $parent_slug = $filter_type === 'event_locations' ? 'gf-event-locations' : 'gf-event-types';
+        $other_selected = $filter_type === 'event_locations' ? $selected_type : $selected_location;
+
+        $parent_term = get_term_by('slug', $parent_slug, 'gf_image_category');
+
+        if (!$parent_term) {
+            wp_send_json_success(['categories' => []]);
+        }
+
+        $categories = get_terms([
+            'taxonomy' => 'gf_image_category',
+            'parent' => $parent_term->term_id,
+            'hide_empty' => false,
+            'orderby' => 'name',
+            'order' => 'ASC',
+        ]);
+
+        $filtered_categories = [];
+
+        foreach ($categories as $category) {
+            $tax_query = [
+                [
+                    'taxonomy' => 'gf_image_category',
+                    'field' => 'term_id',
+                    'terms' => [$category->term_id],
+                ],
+            ];
+
+            if (!empty($other_selected)) {
+                $tax_query[] = [
+                    'taxonomy' => 'gf_image_category',
+                    'field' => 'term_id',
+                    'terms' => [$other_selected],
+                ];
+                $tax_query['relation'] = 'AND';
+            }
+
+            $args = [
+                'post_type' => 'attachment',
+                'post_status' => 'inherit',
+                'post_mime_type' => 'image',
+                'posts_per_page' => -1,
+                'fields' => 'ids',
+                'tax_query' => $tax_query,
+            ];
+
+            $query = new WP_Query($args);
+            $count = $query->found_posts;
+
+            if ($count > 0 || empty($other_selected)) {
+                $filtered_categories[] = [
+                    'id' => $category->term_id,
+                    'name' => $category->name,
+                    'count' => $count,
+                ];
+            }
+        }
+
+        usort($filtered_categories, function($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
+
+        wp_send_json_success(['categories' => $filtered_categories]);
     }
 }

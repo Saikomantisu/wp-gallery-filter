@@ -1,4 +1,4 @@
-jQuery(document).ready(function ($) {
+	jQuery(document).ready(function ($) {
 	let currentImages = [];
 	let currentImageIndex = 0;
 	let currentPage = 1;
@@ -9,6 +9,35 @@ jQuery(document).ready(function ($) {
 	// Get gallery settings
 	const $gallery = $('#frontend-gallery');
 	const perPage = parseInt($gallery.data('per-page')) || 12;
+
+	// Get dropdown elements
+	const $locationSelect = $('#frontend-category-filter-event-location');
+	const $typeSelect = $('#frontend-category-filter-event-type');
+
+	// Fade-in Animation for Images
+	function waitForImagesAndFadeIn($container, callback) {
+		const $images = $container.find('img');
+		const loadedCount = { count: 0 };
+
+		if ($images.length === 0) {
+			callback();
+			return;
+		}
+
+		$images.on('load error', function () {
+			loadedCount.count++;
+
+			if (loadedCount.count >= $images.length) {
+				callback();
+			}
+		});
+
+		if ($images.filter(function () {
+			return this.complete;
+		}).length === $images.length) {
+			callback();
+		}
+	}
 
 	function loadImages(page = 1, category = '') {
 		if (isLoading) return;
@@ -75,7 +104,7 @@ jQuery(document).ready(function ($) {
 			const html = `
                 <div class="masonry-item" data-index="${index}" data-id="${image.id}">
                     <a href="${image.url}" data-lightbox="gf-gallery" data-title="${image.title}">
-                        <img src="${image.thumbnail}" 
+                        <img src="${image.thumbnail}"
                          alt="${image.title}"
                          loading="lazy">
                         <div class="image-overlay">
@@ -87,7 +116,14 @@ jQuery(document).ready(function ($) {
 			$gallery.append(html);
 		});
 
-		// Scroll to top of gallery smoothly
+		waitForImagesAndFadeIn($gallery, function () {
+			$gallery.find('.masonry-item').each(function (index) {
+				setTimeout(() => {
+					$(this).addClass('is-positioned');
+				}, index * 80);
+			});
+		});
+
 		if (currentPage > 1) {
 			$('html, body').animate(
 				{
@@ -194,17 +230,91 @@ jQuery(document).ready(function ($) {
         `);
 	}
 
+	function getFilteredCategories(filterType, selectedLocation, selectedType, callback) {
+		$.post(
+			galleryFilter.ajaxUrl,
+			{
+				action: 'get_filtered_categories',
+				nonce: galleryFilter.nonce,
+				filter_type: filterType,
+				selected_location: selectedLocation,
+				selected_type: selectedType,
+			},
+			function (response) {
+				if (response.success) {
+					callback(response.data.categories);
+				} else {
+					console.error('Failed to fetch filtered categories');
+					callback([]);
+				}
+			}
+		).fail(function () {
+			console.error('Network error fetching filtered categories');
+			callback([]);
+		});
+	}
+
+	function updateDropdownOptions($select, categories, currentSelection) {
+		const currentValue = $select.val();
+		const placeholder = $select.find('option:first').text();
+
+		$select.empty();
+
+		$select.append(`<option value="">${placeholder}</option>`);
+
+		let selectionStillValid = false;
+
+		categories.forEach(function (cat) {
+			$select.append(
+				$(`<option value="${cat.id}">${cat.name} (${cat.count})</option>`)
+			);
+
+			if (currentValue == cat.id && cat.count > 0) {
+				selectionStillValid = true;
+			}
+		});
+
+		if (selectionStillValid && currentValue !== '') {
+			$select.val(currentValue);
+		} else {
+			$select.val('');
+		}
+
+		$select.prop('disabled', false);
+	}
+
 	// Event Handlers
 
-	// Category filter change
-	$('#frontend-category-filter-event-location').on('change', function () {
-		const category = $(this).val();
-		loadImages(1, category);
+	$locationSelect.on('change', function () {
+		const selectedLocation = $(this).val();
+		const selectedType = $typeSelect.val();
+
+		// Disable and show loading state for the other dropdown
+		$typeSelect.prop('disabled', true);
+
+		// Fetch filtered event types
+		getFilteredCategories('event_types', selectedLocation, selectedType, function (categories) {
+			updateDropdownOptions($typeSelect, categories, selectedType);
+
+			// Load images with current selections
+			loadImages(1, '');
+		});
 	});
 
-	$('#frontend-category-filter-event-type').on('change', function () {
-		const category = $(this).val();
-		loadImages(1, category);
+	$typeSelect.on('change', function () {
+		const selectedType = $(this).val();
+		const selectedLocation = $locationSelect.val();
+
+		// Disable and show loading state for the other dropdown
+		$locationSelect.prop('disabled', true);
+
+		// Fetch filtered event locations
+		getFilteredCategories('event_locations', selectedLocation, selectedType, function (categories) {
+			updateDropdownOptions($locationSelect, categories, selectedLocation);
+
+			// Load images with current selections
+			loadImages(1, '');
+		});
 	});
 
 	// Pagination clicks

@@ -6,15 +6,54 @@ class Gallery_Filter_Shortcode
     public function __construct()
     {
         add_shortcode('gallery-filter', [$this, 'render_shortcode']);
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_scripts']);
+    }
+
+    public function enqueue_frontend_scripts()
+    {
+        wp_enqueue_script(
+            'gallery-filter-frontend',
+            GALLERY_FILTER_ASSETS_URL . 'js/frontend.js',
+            ['jquery'],
+            GALLERY_FILTER_VERSION,
+            true
+        );
+
+        wp_enqueue_script(
+            'gallery-filter-lightbox',
+            GALLERY_FILTER_ASSETS_URL . 'js/lightbox.min.js',
+            ['jquery'],
+            '2.11.4',
+            true
+        );
+
+        wp_enqueue_style(
+            'gallery-filter-frontend',
+            GALLERY_FILTER_ASSETS_URL . 'css/frontend.css',
+            [],
+            GALLERY_FILTER_VERSION
+        );
+
+        wp_enqueue_style(
+            'gallery-filter-lightbox',
+            GALLERY_FILTER_ASSETS_URL . 'css/lightbox.min.css',
+            [],
+            '2.11.4'
+        );
+
+        wp_localize_script('gallery-filter-frontend', 'galleryFilter', [
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('gallery_filter_nonce'),
+        ]);
     }
 
     public function render_shortcode($atts)
     {
         // Shortcode now works with no configurable attributes – fixed defaults keep the UI simple.
-        $atts = [
+        $atts = shortcode_atts([
             'per_page' => 12,
             'columns'  => 4,
-        ];
+        ], $atts, 'gallery-filter');
 
         // Get categories with actual counts for the filter dropdown
         $event_location_categories = $this->get_child_categories_with_counts('gf-event-locations');

@@ -92,7 +92,7 @@
 }
 
 .bulk-select {
-    min-height: 120px;
+    height: 400px !important;
     resize: vertical;
 }
 

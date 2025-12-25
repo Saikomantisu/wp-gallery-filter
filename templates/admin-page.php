@@ -57,7 +57,7 @@ $total_event_types = (new Gallery_Filter_Admin())->get_category_image_count_by_s
 
                 <div class="form-group">
                     <label for="bulk-categories">Select Categories</label>
-                    <select id="bulk-categories" multiple class="form-control bulk-select">
+                    <select id="bulk-categories" multiple class="form-control bulk-select" >
                         <?php foreach ($categories as $cat): ?>
                             <option value="<?php echo esc_attr($cat->term_id); ?>">
                                 <?php echo esc_html($cat->name); ?> (<?php echo $cat->actual_count; ?>)

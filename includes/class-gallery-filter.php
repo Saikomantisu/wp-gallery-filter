@@ -23,22 +23,18 @@ class Gallery_Filter
         ]);
 
         // Create parent categories
-        wp_insert_term(
-            'Gallery Filter Event Locations',
-            'gf_image_category',
-            [
+        if (!term_exists('gf-event-locations', 'gf_image_category')) {
+            wp_insert_term('Gallery Filter Event Locations', 'gf_image_category', [
                 'description' => 'Categories for event locations',
                 'slug' => 'gf-event-locations'
-            ]
-        );
-
-        wp_insert_term(
-            'Gallery Filter Event Types',
-            'gf_image_category',
-            [
+            ]);
+        }
+    
+        if (!term_exists('gf-event-types', 'gf_image_category')) {
+            wp_insert_term('Gallery Filter Event Types', 'gf_image_category', [
                 'description' => 'Categories for event types',
                 'slug' => 'gf-event-types'
-            ]
-        );
+            ]);
+        }
     }
 }

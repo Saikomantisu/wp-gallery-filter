@@ -4,7 +4,7 @@
  * Plugin Name: Gallery Filter
  * Plugin URI: https://nexgenlk.com/gallery-filter
  * Description: Allows users to tag images, create customizable galleries, and filter images by categories or tags.
- * Version: 1.0.1
+ * Version: 2.1.1
  * Author: NexGen Devs
  * Author URI: https://nexgenlk.com
  * License: GPL2

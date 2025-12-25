@@ -1,44 +1,49 @@
 # Gallery Filter
 
-Filter and display WordPress media attachments by custom categories. The plugin registers an `image_category` taxonomy, provides an AJAX-powered admin screen to tag images in bulk, and outputs a responsive masonry gallery via shortcode.
+A simple WordPress plugin for creating filtered image galleries with masonry layout.
 
 ---
 
 ## Features
 
-• Custom taxonomy for images (`gf_image_category`).  
-• Bulk tagging and search in a no-reload admin grid.  
-• Two category dropdown filters on the front-end.  
-• Lazy-loaded, CSS masonry layout with pagination.
+* Create custom categories for your images
+* Easy bulk tagging interface in the admin panel
+* Filter galleries by category on the front-end
+* Responsive masonry grid layout (3 columns → 2 columns → 1 column)
+* Lightbox for viewing full-size images
+* Pagination for large galleries
+* Instant responsive resizing
 
 ---
 
 ## Installation
 
-1. Copy the `gallery-filter` folder to `wp-content/plugins/`.  
-2. Activate **Gallery Filter** in the Plugins screen.  
-3. Open **Media → Gallery Filter** to start tagging images.
+1. Upload the `gallery-filter` folder to your WordPress plugins directory
+2. Activate **Gallery Filter** in Plugins
+3. Go to **Media → Gallery Filter** to categorize your images
 
 ---
 
 ## Usage
 
-Add the shortcode where the gallery should appear:
+Add this shortcode to any page or post:
 
-```text
+```
 [gallery_filter]
 ```
 
-Defaults: 12 images per page, four masonry columns on large screens. The gallery automatically shows the two category filters and pagination controls.
+---
+
+## Customization
+
+You can change the number of images per page:
+
+```
+[gallery_filter per_page="20"]
+```
 
 ---
 
-## Stack
+## Support
 
-| Layer | Details |
-|-------|---------|
-| PHP   | OOP classes, AJAX via `wp_ajax`, custom taxonomy |
-| JS    | ES6 + WordPress-bundled jQuery (`assets/js/`) |
-| CSS   | Modern flex / column layout (`assets/css/`) |
-
-No external build tools or frameworks.
+For questions or issues, please open an issue on GitHub.

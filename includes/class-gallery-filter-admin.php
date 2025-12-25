@@ -7,7 +7,7 @@ class Gallery_Filter_Admin
     {
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts']);
-        add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_scripts']);
+
     }
 
     public function add_admin_menu()
@@ -42,50 +42,6 @@ class Gallery_Filter_Admin
         );
 
         wp_localize_script('gallery-filter-admin', 'galleryFilter', [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('gallery_filter_nonce'),
-        ]);
-    }
-
-    public function enqueue_frontend_scripts()
-    {
-        global $post;
-
-        if (!is_a($post, 'WP_Post') || !has_shortcode($post->post_content, 'gallery-filter')) {
-            return;
-        }
-
-        wp_enqueue_script(
-            'gallery-filter-frontend',
-            GALLERY_FILTER_ASSETS_URL . 'js/frontend.js',
-            ['jquery'],
-            GALLERY_FILTER_VERSION,
-            true
-        );
-
-        wp_enqueue_script(
-            'gallery-filter-lightbox',
-            GALLERY_FILTER_ASSETS_URL . 'js/lightbox.min.js',
-            ['jquery'],
-            '2.11.4',
-            true
-        );
-
-        wp_enqueue_style(
-            'gallery-filter-frontend',
-            GALLERY_FILTER_ASSETS_URL . 'css/frontend.css',
-            [],
-            GALLERY_FILTER_VERSION
-        );
-
-        wp_enqueue_style(
-            'gallery-filter-lightbox',
-            GALLERY_FILTER_ASSETS_URL . 'css/lightbox.min.css',
-            [],
-            '2.11.4'
-        );
-
-        wp_localize_script('gallery-filter-frontend', 'galleryFilter', [
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('gallery_filter_nonce'),
         ]);

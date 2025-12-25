@@ -1,23 +1,27 @@
 <div class="gallery-filter-wrapper" id="<?php echo esc_attr($gallery_id); ?>">
 
     <div class="categories_filter">
-        <select id="frontend-category-filter-event-location" class="category-filter-select">
-            <option value="">Event Locations</option>
-            <?php foreach ($event_location_categories as $cat): ?>
-                <option value="<?php echo esc_attr($cat->term_id); ?>">
-                    <?php echo esc_html($cat->name); ?> (<?php echo $cat->actual_count; ?>)
-                </option>
-            <?php endforeach; ?>
-        </select>
+        <div class="elementor-field-group elementor-field-type-select">
+            <select id="frontend-category-filter-event-location" class="elementor-field elementor-field-textual elementor-size-sm">
+                <option value="">Event Locations</option>
+                <?php foreach ($event_location_categories as $cat): ?>
+                    <option value="<?php echo esc_attr($cat->term_id); ?>">
+                        <?php echo esc_html($cat->name); ?> (<?php echo $cat->actual_count; ?>)
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
 
-        <select id="frontend-category-filter-event-type" class="category-filter-select">
-            <option value="">Event Types</option>
-            <?php foreach ($event_type_categories as $cat): ?>
-                <option value="<?php echo esc_attr($cat->term_id); ?>">
-                    <?php echo esc_html($cat->name); ?> (<?php echo $cat->actual_count; ?>)
-                </option>
-            <?php endforeach; ?>
-        </select>
+        <div class="elementor-field-group elementor-field-type-select">
+            <select id="frontend-category-filter-event-type" class="elementor-field elementor-field-textual elementor-size-sm">
+                <option value="">Event Types</option>
+                <?php foreach ($event_type_categories as $cat): ?>
+                    <option value="<?php echo esc_attr($cat->term_id); ?>">
+                        <?php echo esc_html($cat->name); ?> (<?php echo $cat->actual_count; ?>)
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
     </div>
 
     <div class="gallery-loading" id="frontend-loading" style="display: none;">
