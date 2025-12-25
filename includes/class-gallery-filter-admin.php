@@ -7,7 +7,6 @@ class Gallery_Filter_Admin
     {
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts']);
-
     }
 
     public function add_admin_menu()
@@ -105,12 +104,18 @@ class Gallery_Filter_Admin
             return [];
         }
 
+        $exclude_slugs = ['gf-event-locations', 'gf-event-types'];
+
+        $filtered_categories = array_filter($categories, function ($term) use ($exclude_slugs) {
+            return !in_array($term->slug, $exclude_slugs);
+        });
+
         // Get actual counts for each category
-        foreach ($categories as $category) {
+        foreach ($filtered_categories as $category) {
             $category->actual_count = $this->get_category_image_count($category->term_id);
         }
 
-        return $categories;
+        return $filtered_categories;
     }
 
     /**

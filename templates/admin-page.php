@@ -1,6 +1,6 @@
 <?php
 $total_event_locations = (new Gallery_Filter_Admin())->get_category_image_count_by_slug('gf-event-locations');
-$total_event_types = (new Gallery_Filter_Admin())->get_category_image_count_by_slug('event-types');
+$total_event_types = (new Gallery_Filter_Admin())->get_category_image_count_by_slug('gf-event-types');
 ?>
 
 <div class="wrap gallery-filter-admin">
@@ -21,7 +21,7 @@ $total_event_types = (new Gallery_Filter_Admin())->get_category_image_count_by_s
                 <div class="form-group">
                     <label for="category-filter-event-location">Event Locations</label>
                     <select id="category-filter-event-location" class="form-control category-select-dropdown">
-                        <option value="">✓ All Categories (<?php echo $total_event_locations; ?>)</option>
+                        <option value="">All Categories (<?php echo $total_event_locations; ?>)</option>
                         <?php foreach ($event_location_categories as $cat): ?>
                             <option value="<?php echo esc_attr($cat->term_id); ?>">
                                 <?php echo esc_html($cat->name); ?> (<?php echo $cat->actual_count; ?>)
@@ -33,7 +33,7 @@ $total_event_types = (new Gallery_Filter_Admin())->get_category_image_count_by_s
                 <div class="form-group">
                     <label for="category-filter-event-type">Event Types</label>
                     <select id="category-filter-event-type" class="form-control category-select-dropdown">
-                        <option value="">✓ All Categories (<?php echo $total_event_types; ?>)</option>
+                        <option value="">All Categories (<?php echo $total_event_types; ?>)</option>
                         <?php foreach ($event_type_categories as $cat): ?>
                             <option value="<?php echo esc_attr($cat->term_id); ?>">
                                 <?php echo esc_html($cat->name); ?> (<?php echo $cat->actual_count; ?>)
@@ -57,7 +57,7 @@ $total_event_types = (new Gallery_Filter_Admin())->get_category_image_count_by_s
 
                 <div class="form-group">
                     <label for="bulk-categories">Select Categories</label>
-                    <select id="bulk-categories" multiple class="form-control bulk-select" >
+                    <select id="bulk-categories" multiple class="form-control bulk-select">
                         <?php foreach ($categories as $cat): ?>
                             <option value="<?php echo esc_attr($cat->term_id); ?>">
                                 <?php echo esc_html($cat->name); ?> (<?php echo $cat->actual_count; ?>)
