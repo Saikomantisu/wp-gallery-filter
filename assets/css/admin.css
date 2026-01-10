@@ -467,6 +467,17 @@
     margin-bottom: 25px;
 }
 
+.category-group {
+    margin-bottom: 20px;
+}
+
+.category-group h4 {
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
 .category-select {
     min-height: 120px;
 }

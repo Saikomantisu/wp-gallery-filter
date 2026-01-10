@@ -56,14 +56,27 @@ $total_event_types = (new Gallery_Filter_Admin())->get_category_image_count_by_s
                 <h3><i class="dashicons dashicons-admin-tools"></i> Bulk Actions</h3>
 
                 <div class="form-group">
-                    <label for="bulk-categories">Select Categories</label>
-                    <select id="bulk-categories" multiple class="form-control bulk-select">
-                        <?php foreach ($categories as $cat): ?>
-                            <option value="<?php echo esc_attr($cat->term_id); ?>">
-                                <?php echo esc_html($cat->name); ?> (<?php echo $cat->actual_count; ?>)
-                            </option>
+                    <label for="bulk-event-types">Select Event Types</label>
+                    <div id="bulk-event-types" class="bulk-checkbox-list">
+                        <?php foreach ($event_type_categories as $cat): ?>
+                            <label class="bulk-checkbox-label">
+                                <input type="checkbox" class="bulk-checkbox" value="<?php echo esc_attr($cat->term_id); ?>">
+                                <span class="bulk-checkbox-text"><?php echo esc_html($cat->name); ?> <span class="category-count">(<?php echo $cat->actual_count; ?>)</span></span>
+                            </label>
                         <?php endforeach; ?>
-                    </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="bulk-event-locations">Select Event Locations</label>
+                    <div id="bulk-event-locations" class="bulk-checkbox-list">
+                        <?php foreach ($event_location_categories as $cat): ?>
+                            <label class="bulk-checkbox-label">
+                                <input type="checkbox" class="bulk-checkbox" value="<?php echo esc_attr($cat->term_id); ?>">
+                                <span class="bulk-checkbox-text"><?php echo esc_html($cat->name); ?> <span class="category-count">(<?php echo $cat->actual_count; ?>)</span></span>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
 
                 <div class="bulk-actions">
@@ -139,14 +152,29 @@ $total_event_types = (new Gallery_Filter_Admin())->get_category_image_count_by_s
                     </div>
 
                     <div class="available-categories">
-                        <h4>Available Categories</h4>
-                        <select id="image-categories" multiple class="form-control category-select">
-                            <?php foreach ($categories as $cat): ?>
-                                <option value="<?php echo esc_attr($cat->term_id); ?>">
-                                    <?php echo esc_html($cat->name); ?> (<?php echo $cat->actual_count; ?>)
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                        <div class="category-group">
+                            <h4>Event Types</h4>
+                            <div id="image-event-types" class="category-checkbox-list">
+                                <?php foreach ($event_type_categories as $cat): ?>
+                                    <label class="category-checkbox-label">
+                                        <input type="checkbox" class="category-checkbox" value="<?php echo esc_attr($cat->term_id); ?>">
+                                        <span class="category-checkbox-text"><?php echo esc_html($cat->name); ?> <span class="category-count">(<?php echo $cat->actual_count; ?>)</span></span>
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+
+                        <div class="category-group">
+                            <h4>Event Locations</h4>
+                            <div id="image-event-locations" class="category-checkbox-list">
+                                <?php foreach ($event_location_categories as $cat): ?>
+                                    <label class="category-checkbox-label">
+                                        <input type="checkbox" class="category-checkbox" value="<?php echo esc_attr($cat->term_id); ?>">
+                                        <span class="category-checkbox-text"><?php echo esc_html($cat->name); ?> <span class="category-count">(<?php echo $cat->actual_count; ?>)</span></span>
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

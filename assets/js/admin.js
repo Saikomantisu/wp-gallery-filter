@@ -194,7 +194,7 @@ jQuery(document).ready(function($) {
     // Load image categories
     function loadImageCategories(imageId) {
         $('#current-categories-display').html('<span class="loading-text">Loading categories...</span>');
-        
+
         $.post(galleryFilter.ajaxUrl, {
             action: 'get_image_categories',
             nonce: galleryFilter.nonce,
@@ -202,8 +202,18 @@ jQuery(document).ready(function($) {
         }, function(response) {
             if (response.success) {
                 displayCurrentCategories(response.data.categories);
-                // Update select options
-                $('#image-categories').val(response.data.categories.map(cat => cat.id.toString()));
+
+                const selectedCategories = response.data.categories.map(cat => cat.id.toString());
+
+                // Uncheck all checkboxes first
+                $('#image-event-types .category-checkbox').prop('checked', false);
+                $('#image-event-locations .category-checkbox').prop('checked', false);
+
+                // Check selected checkboxes
+                selectedCategories.forEach(function(id) {
+                    $('#image-event-types .category-checkbox[value="' + id + '"]').prop('checked', true);
+                    $('#image-event-locations .category-checkbox[value="' + id + '"]').prop('checked', true);
+                });
             } else {
                 $('#current-categories-display').html('<span class="loading-text">Error loading categories</span>');
             }
@@ -234,44 +244,55 @@ jQuery(document).ready(function($) {
     // Remove category chip
     $(document).on('click', '.category-chip-remove', function() {
         const categoryId = $(this).data('category-id').toString();
-        const select = $('#image-categories');
-        const currentValues = select.val() || [];
-        const newValues = currentValues.filter(val => val !== categoryId);
-        select.val(newValues);
-        
+
+        // Uncheck the checkbox for this category
+        $('#image-event-types .category-checkbox[value="' + categoryId + '"]').prop('checked', false);
+        $('#image-event-locations .category-checkbox[value="' + categoryId + '"]').prop('checked', false);
+
         // Remove the chip
         $(this).closest('.category-chip').remove();
-        
-        // If no categories left, show placeholder
-        if (newValues.length === 0) {
-            $('#current-categories-display').html('<span class="loading-text">No categories assigned</span>');
-        }
+
+        // Update chips from both dropdowns
+        updateModalCategoryChips();
     });
     
-    // Update chips when select changes
-    $('#image-categories').on('change', function() {
-        const selectedIds = $(this).val() || [];
+    // Update chips when event types dropdown changes
+    $('#image-event-types').on('change', updateModalCategoryChips);
+
+    // Update chips when event locations dropdown changes
+    $('#image-event-locations').on('change', updateModalCategoryChips);
+
+    // Helper function to update chips from both dropdowns
+    function updateModalCategoryChips() {
+        const eventTypes = $('#image-event-types').val() || [];
+        const eventLocations = $('#image-event-locations').val() || [];
         const categories = [];
-        
-        selectedIds.forEach(function(id) {
-            const option = $(`#image-categories option[value="${id}"]`);
+
+        eventTypes.forEach(function(id) {
+            const option = $(`#image-event-types option[value="${id}"]`);
             if (option.length) {
-                categories.push({
-                    id: parseInt(id),
-                    name: option.text()
-                });
+                categories.push({ id: parseInt(id), name: option.text() });
             }
         });
-        
+
+        eventLocations.forEach(function(id) {
+            const option = $(`#image-event-locations option[value="${id}"]`);
+            if (option.length) {
+                categories.push({ id: parseInt(id), name: option.text() });
+            }
+        });
+
         displayCurrentCategories(categories);
-    });
+    }
     
     // Save categories
     $('#save-categories').on('click', function() {
-        const categories = $('#image-categories').val() || [];
-        
+        const eventTypes = $('#image-event-types').val() || [];
+        const eventLocations = $('#image-event-locations').val() || [];
+        const categories = [...eventTypes, ...eventLocations];
+
         $(this).prop('disabled', true).html('<i class="dashicons dashicons-update"></i> Saving...');
-        
+
         $.post(galleryFilter.ajaxUrl, {
             action: 'save_image_categories',
             nonce: galleryFilter.nonce,
@@ -297,29 +318,35 @@ jQuery(document).ready(function($) {
             alert('Please select some images first');
             return;
         }
-        
-        const categories = $('#bulk-categories').val() || [];
+
+        const eventTypes = $('#bulk-event-types').val() || [];
+        const eventLocations = $('#bulk-event-locations').val() || [];
+        const categories = [...eventTypes, ...eventLocations];
+
         if (categories.length === 0) {
             alert('Please select categories to add');
             return;
         }
-        
+
         performBulkAction('add', categories);
     });
-    
-    // Bulk remove categories  
+
+    // Bulk remove categories
     $('#bulk-remove').on('click', function() {
         if (selectedImages.length === 0) {
             alert('Please select some images first');
             return;
         }
-        
-        const categories = $('#bulk-categories').val() || [];
+
+        const eventTypes = $('#bulk-event-types').val() || [];
+        const eventLocations = $('#bulk-event-locations').val() || [];
+        const categories = [...eventTypes, ...eventLocations];
+
         if (categories.length === 0) {
             alert('Please select categories to remove');
             return;
         }
-        
+
         performBulkAction('remove', categories);
     });
     
