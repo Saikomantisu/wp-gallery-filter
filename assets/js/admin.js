@@ -26,7 +26,7 @@ jQuery(document).ready(function($) {
                 displayPagination(response.data.current_page, response.data.max_pages);
                 updateResultsCount(response.data.total, response.data.images.length);
             } else {
-                showError('Failed to load images');
+                showError('Hmm, something went wrong loading your photos. Please try again.');
             }
         }).fail(function() {
             showError('Network error occurred');
@@ -287,8 +287,17 @@ jQuery(document).ready(function($) {
     
     // Save categories
     $('#save-categories').on('click', function() {
-        const eventTypes = $('#image-event-types').val() || [];
-        const eventLocations = $('#image-event-locations').val() || [];
+        const eventTypes = [];
+        const eventLocations = [];
+
+        $('#image-event-types .category-checkbox:checked').each(function() {
+            eventTypes.push($(this).val());
+        });
+
+        $('#image-event-locations .category-checkbox:checked').each(function() {
+            eventLocations.push($(this).val());
+        });
+
         const categories = [...eventTypes, ...eventLocations];
 
         $(this).prop('disabled', true).html('<i class="dashicons dashicons-update"></i> Saving...');
@@ -303,28 +312,37 @@ jQuery(document).ready(function($) {
                 $('#modal').hide();
                 $('body').removeClass('modal-open');
                 loadImages(currentPage); // Refresh current page
-                showSuccess('Categories saved successfully!');
+                showSuccess('Perfect! Your tags have been saved.');
             } else {
                 alert('Error: ' + response.data);
             }
         }).always(function() {
-            $('#save-categories').prop('disabled', false).html('<i class="dashicons dashicons-saved"></i> Save Changes');
+            $('#save-categories').prop('disabled', false).html('<i class="dashicons dashicons-saved"></i> Save Tags');
         });
     });
     
     // Bulk add categories
     $('#bulk-add').on('click', function() {
         if (selectedImages.length === 0) {
-            alert('Please select some images first');
+            alert('Please select some photos first');
             return;
         }
 
-        const eventTypes = $('#bulk-event-types').val() || [];
-        const eventLocations = $('#bulk-event-locations').val() || [];
+        const eventTypes = [];
+        const eventLocations = [];
+
+        $('#bulk-event-types .bulk-checkbox:checked').each(function() {
+            eventTypes.push($(this).val());
+        });
+
+        $('#bulk-event-locations .bulk-checkbox:checked').each(function() {
+            eventLocations.push($(this).val());
+        });
+
         const categories = [...eventTypes, ...eventLocations];
 
         if (categories.length === 0) {
-            alert('Please select categories to add');
+            alert('Please choose some tags to add');
             return;
         }
 
@@ -334,16 +352,25 @@ jQuery(document).ready(function($) {
     // Bulk remove categories
     $('#bulk-remove').on('click', function() {
         if (selectedImages.length === 0) {
-            alert('Please select some images first');
+            alert('Please select some photos first');
             return;
         }
 
-        const eventTypes = $('#bulk-event-types').val() || [];
-        const eventLocations = $('#bulk-event-locations').val() || [];
+        const eventTypes = [];
+        const eventLocations = [];
+
+        $('#bulk-event-types .bulk-checkbox:checked').each(function() {
+            eventTypes.push($(this).val());
+        });
+
+        $('#bulk-event-locations .bulk-checkbox:checked').each(function() {
+            eventLocations.push($(this).val());
+        });
+
         const categories = [...eventTypes, ...eventLocations];
 
         if (categories.length === 0) {
-            alert('Please select categories to remove');
+            alert('Please choose some tags to remove');
             return;
         }
 
@@ -352,8 +379,8 @@ jQuery(document).ready(function($) {
     
     // Perform bulk action
     function performBulkAction(action, categories) {
-        const actionText = action === 'add' ? 'add to' : 'remove from';
-        if (!confirm(`${action === 'add' ? 'Add' : 'Remove'} selected categories ${actionText} ${selectedImages.length} images?`)) {
+        const actionText = action === 'add' ? 'to' : 'from';
+        if (!confirm(`Ready to ${action === 'add' ? 'add' : 'remove'} these tags ${actionText} ${selectedImages.length} photo${selectedImages.length > 1 ? 's' : ''}?`)) {
             return;
         }
         
@@ -403,14 +430,14 @@ jQuery(document).ready(function($) {
                 completed++;
                 if (completed === selectedImages.length) {
                     // All done
-                    $button.prop('disabled', false).html(`<i class="dashicons dashicons-${action === 'add' ? 'plus-alt' : 'minus'}"></i> ${action === 'add' ? 'Add to' : 'Remove from'} Selected`);
-                    
+                    $button.prop('disabled', false).html(`<i class="dashicons dashicons-${action === 'add' ? 'plus-alt' : 'minus'}"></i> ${action === 'add' ? 'Add Tags' : 'Remove Tags'}`);
+
                     if (errors === 0) {
-                        showSuccess(`Categories ${action === 'add' ? 'added to' : 'removed from'} all selected images!`);
+                        showSuccess(`Tags ${action === 'add' ? 'added to' : 'removed from'} all ${selectedImages.length} photo${selectedImages.length > 1 ? 's' : ''}!`);
                     } else {
                         alert(`Completed with ${errors} errors`);
                     }
-                    
+
                     loadImages(currentPage); // Refresh
                 }
             });

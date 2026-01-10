@@ -6,20 +6,20 @@ $total_event_types = (new Gallery_Filter_Admin())->get_category_image_count_by_s
 <div class="wrap gallery-filter-admin">
     <div class="admin-header">
         <h1>Gallery Filter</h1>
-        <p class="admin-subtitle">Organize and categorize your media library</p>
+        <p class="admin-subtitle">Welcome! Let's organize your photos with ease</p>
     </div>
 
     <div class="admin-container">
         <div class="sidebar">
             <div class="sidebar-section">
-                <h3><i class="dashicons dashicons-filter"></i> Filter by Category</h3>
+                <h3><i class="dashicons dashicons-filter"></i> Find Your Photos</h3>
                 <div class="form-group">
-                    <label for="search">Search Images</label>
-                    <input type="text" id="search" placeholder="Search by title or filename..." class="form-control">
+                    <label for="search">Search by name or filename</label>
+                    <input type="text" id="search" placeholder="Try typing a name..." class="form-control">
                 </div>
 
                 <div class="form-group">
-                    <label for="category-filter-event-location">Event Locations</label>
+                    <label for="category-filter-event-location">Where was it?</label>
                     <select id="category-filter-event-location" class="form-control category-select-dropdown">
                         <option value="">All Categories (<?php echo $total_event_locations; ?>)</option>
                         <?php foreach ($event_location_categories as $cat): ?>
@@ -31,7 +31,7 @@ $total_event_types = (new Gallery_Filter_Admin())->get_category_image_count_by_s
                 </div>
 
                 <div class="form-group">
-                    <label for="category-filter-event-type">Event Types</label>
+                    <label for="category-filter-event-type">What kind of event?</label>
                     <select id="category-filter-event-type" class="form-control category-select-dropdown">
                         <option value="">All Categories (<?php echo $total_event_types; ?>)</option>
                         <?php foreach ($event_type_categories as $cat): ?>
@@ -53,10 +53,10 @@ $total_event_types = (new Gallery_Filter_Admin())->get_category_image_count_by_s
             </div>
 
             <div class="sidebar-section">
-                <h3><i class="dashicons dashicons-admin-tools"></i> Bulk Actions</h3>
+                <h3><i class="dashicons dashicons-admin-tools"></i> Quick Actions</h3>
 
                 <div class="form-group">
-                    <label for="bulk-event-types">Select Event Types</label>
+                    <label for="bulk-event-types">Choose event types</label>
                     <div id="bulk-event-types" class="bulk-checkbox-list">
                         <?php foreach ($event_type_categories as $cat): ?>
                             <label class="bulk-checkbox-label">
@@ -68,7 +68,7 @@ $total_event_types = (new Gallery_Filter_Admin())->get_category_image_count_by_s
                 </div>
 
                 <div class="form-group">
-                    <label for="bulk-event-locations">Select Event Locations</label>
+                    <label for="bulk-event-locations">Pick locations</label>
                     <div id="bulk-event-locations" class="bulk-checkbox-list">
                         <?php foreach ($event_location_categories as $cat): ?>
                             <label class="bulk-checkbox-label">
@@ -81,29 +81,29 @@ $total_event_types = (new Gallery_Filter_Admin())->get_category_image_count_by_s
 
                 <div class="bulk-actions">
                     <button id="bulk-add" class="btn btn-success">
-                        <i class="dashicons dashicons-plus-alt"></i> Add to Selected
+                        <i class="dashicons dashicons-plus-alt"></i> Add Tags
                     </button>
                     <button id="bulk-remove" class="btn btn-warning">
-                        <i class="dashicons dashicons-minus"></i> Remove from Selected
+                        <i class="dashicons dashicons-minus"></i> Remove Tags
                     </button>
                     <button id="select-all" class="btn btn-outline">
-                        <i class="dashicons dashicons-yes-alt"></i> Select All
+                        <i class="dashicons dashicons-yes-alt"></i> All Photos
                     </button>
                     <button id="deselect-all" class="btn btn-outline">
-                        <i class="dashicons dashicons-dismiss"></i> Deselect All
+                        <i class="dashicons dashicons-dismiss"></i> Clear Selection
                     </button>
                 </div>
 
                 <div class="selection-info">
                     <i class="dashicons dashicons-images-alt2"></i>
-                    <span id="selected-count">0</span> images selected
+                    <span id="selected-count">0</span> photos selected
                 </div>
             </div>
         </div>
 
         <div class="main-content">
             <div class="content-header">
-                <h2>Media Library</h2>
+                <h2>Your Photos</h2>
                 <div class="view-options">
                     <span class="results-count" id="results-count">Loading...</span>
                 </div>
@@ -112,7 +112,7 @@ $total_event_types = (new Gallery_Filter_Admin())->get_category_image_count_by_s
             <div class="loading-overlay" id="loading-overlay" style="display: none;">
                 <div class="loading-spinner">
                     <div class="spinner"></div>
-                    <p>Loading images...</p>
+                    <p>Almost there, loading your photos...</p>
                 </div>
             </div>
 
@@ -121,12 +121,26 @@ $total_event_types = (new Gallery_Filter_Admin())->get_category_image_count_by_s
         </div>
     </div>
 
+    <!-- Footer -->
+    <div class="admin-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <span class="footer-brand-text">Built by <a href="https://nexgendevs.lk" target="_blank" rel="noopener noreferrer" class="footer-brand-link">
+                    NexGen Devs
+                </a></span>
+            </div>
+            <div class="footer-version">
+                Gallery Filter v<?php echo GALLERY_FILTER_VERSION; ?>
+            </div>
+        </div>
+    </div>
+
     <!-- Modern Modal -->
     <div id="modal" class="modal" style="display:none;">
         <div class="modal-backdrop"></div>
         <div class="modal-container">
             <div class="modal-header">
-                <h3><i class="dashicons dashicons-format-image"></i> Edit Image Categories</h3>
+                <h3><i class="dashicons dashicons-format-image"></i> Edit Photo Tags</h3>
                 <button class="modal-close" aria-label="Close">
                     <i class="dashicons dashicons-no-alt"></i>
                 </button>
@@ -145,7 +159,7 @@ $total_event_types = (new Gallery_Filter_Admin())->get_category_image_count_by_s
 
                 <div class="categories-section">
                     <div class="current-categories">
-                        <h4>Current Categories</h4>
+                        <h4>Current Tags</h4>
                         <div id="current-categories-display" class="category-chips">
                             <span class="loading-text">Loading categories...</span>
                         </div>
@@ -181,7 +195,7 @@ $total_event_types = (new Gallery_Filter_Admin())->get_category_image_count_by_s
 
             <div class="modal-footer">
                 <button id="save-categories" class="btn btn-primary">
-                    <i class="dashicons dashicons-saved"></i> Save Changes
+                    <i class="dashicons dashicons-saved"></i> Save Tags
                 </button>
                 <button class="modal-close btn btn-secondary">
                     <i class="dashicons dashicons-dismiss"></i> Cancel
