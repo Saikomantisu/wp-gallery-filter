@@ -121,20 +121,6 @@ $total_event_types = (new Gallery_Filter_Admin())->get_category_image_count_by_s
         </div>
     </div>
 
-    <!-- Footer -->
-    <div class="admin-footer">
-        <div class="footer-content">
-            <div class="footer-brand">
-                <span class="footer-brand-text">Built by <a href="https://nexgendevs.lk" target="_blank" rel="noopener noreferrer" class="footer-brand-link">
-                    NexGen Devs
-                </a></span>
-            </div>
-            <div class="footer-version">
-                Gallery Filter v<?php echo GALLERY_FILTER_VERSION; ?>
-            </div>
-        </div>
-    </div>
-
     <!-- Modern Modal -->
     <div id="modal" class="modal" style="display:none;">
         <div class="modal-backdrop"></div>
