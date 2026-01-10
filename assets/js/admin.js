@@ -256,30 +256,30 @@ jQuery(document).ready(function($) {
         updateModalCategoryChips();
     });
     
-    // Update chips when event types dropdown changes
-    $('#image-event-types').on('change', updateModalCategoryChips);
+    // Update chips when event types checkboxes change
+    $('#image-event-types').on('change', '.category-checkbox', updateModalCategoryChips);
 
-    // Update chips when event locations dropdown changes
-    $('#image-event-locations').on('change', updateModalCategoryChips);
+    // Update chips when event locations checkboxes change
+    $('#image-event-locations').on('change', '.category-checkbox', updateModalCategoryChips);
 
     // Helper function to update chips from both dropdowns
     function updateModalCategoryChips() {
-        const eventTypes = $('#image-event-types').val() || [];
-        const eventLocations = $('#image-event-locations').val() || [];
+        const eventTypes = [];
+        const eventLocations = [];
         const categories = [];
 
-        eventTypes.forEach(function(id) {
-            const option = $(`#image-event-types option[value="${id}"]`);
-            if (option.length) {
-                categories.push({ id: parseInt(id), name: option.text() });
-            }
+        $('#image-event-types .category-checkbox:checked').each(function() {
+            const id = $(this).val();
+            const text = $(this).next('.category-checkbox-text').text();
+            eventTypes.push(id);
+            categories.push({ id: parseInt(id), name: text });
         });
 
-        eventLocations.forEach(function(id) {
-            const option = $(`#image-event-locations option[value="${id}"]`);
-            if (option.length) {
-                categories.push({ id: parseInt(id), name: option.text() });
-            }
+        $('#image-event-locations .category-checkbox:checked').each(function() {
+            const id = $(this).val();
+            const text = $(this).next('.category-checkbox-text').text();
+            eventLocations.push(id);
+            categories.push({ id: parseInt(id), name: text });
         });
 
         displayCurrentCategories(categories);
